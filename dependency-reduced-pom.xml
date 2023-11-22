@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>vasanti</groupId>
-  <artifactId>dropwizard-example</artifactId>
+  <artifactId>categories</artifactId>
   <name>dw</name>
   <version>1.0</version>
   <build>
@@ -126,14 +126,25 @@
       </properties>
     </profile>
   </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.33</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
   <reporting>
     <plugins>
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <configuration>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-        </configuration>
+        <version>3.3.0</version>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -153,8 +164,9 @@
   </dependencyManagement>
   <properties>
     <dropwizard.version>4.0.3</dropwizard.version>
-    <mainClass>dropwizard.dwApplication</mainClass>
+    <mainClass>Categories</mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <dropwizard-guicey-version>7.0.2</dropwizard-guicey-version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>

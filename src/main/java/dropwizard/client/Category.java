@@ -11,7 +11,15 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Category {
+
+
+
+    @ColumnName("id")
+    private Long id;
 
     @ColumnName("category_id")
     private Long category_id;
