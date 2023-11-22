@@ -8,9 +8,12 @@ import dropwizard.resources.CategoryResource;
 import dropwizard.resources.FooterResource;
 import dropwizard.service.CategoryService;
 import dropwizard.service.FooterService;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi3.JdbiFactory;
 import org.jdbi.v3.core.Jdbi;
 
@@ -28,13 +31,14 @@ public class Categories extends Application<CategoriesConfiguration> {
 
     @Override
     public void initialize(final Bootstrap<CategoriesConfiguration> bootstrap) {
-
+        bootstrap.setConfigurationSourceProvider
+                (new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor()));
     }
 
     @Override
     public void run(final CategoriesConfiguration configuration,
                     final Environment environment) {
-        final JdbiFactory factory = new JdbiFactory();
+        final JdbiFactory factory = new JdbiFactory() ;
         final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mysql");
         final CategoryRepository categoryRepository = new CategoryRepositoryImpl(jdbi);
         final CategoryService categoryService = new CategoryService(categoryRepository);

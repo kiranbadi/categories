@@ -9,13 +9,13 @@ database:
   driverClass: com.mysql.cj.jdbc.Driver
 
   # the username
-  user: root
+  user: ${db_user}
 
   # the password
-  password: kiran
+  password: ${db_password}
 
   # the JDBC URL; make sure to use the correct port and database name
-  url: jdbc:mysql://localhost:3306/badi1991_listngrow?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  url: jdbc:mysql://${db_host}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 
   # any properties specific to your JDBC driver:
   properties:
