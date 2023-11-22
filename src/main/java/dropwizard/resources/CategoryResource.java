@@ -4,13 +4,12 @@ package dropwizard.resources;
 import dropwizard.client.Category;
 import dropwizard.service.CategoryService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 
 @Path("/category")
@@ -44,6 +43,36 @@ public class CategoryResource {
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+    }
+
+    @POST
+    @Path("/save")
+    public Response saveCategory(Category category) {
+        Category category1 = categoryService.saveCategory(category);
+        if (category1 != null) {
+            return Response.ok(category1).build();
+        } else {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PUT
+    @Path("/upsert")
+    public Response upsertCategory(Category category) {
+        Optional<Category> category1 = categoryService.upsertCategory(category);
+        if (category1.isPresent()) {
+            return Response.ok(category1).build();
+        } else {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteCategory(@PathParam("id") int id) {
+        categoryService.deleteCategory(id);
+        return Response.ok().build();
     }
 
 }

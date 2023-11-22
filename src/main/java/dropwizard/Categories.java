@@ -45,5 +45,4 @@ public class Categories extends Application<CategoriesConfiguration> {
         final FooterResource footerResource = new FooterResource(footerService);
         environment.jersey().register(footerResource);
     }
-
 }
