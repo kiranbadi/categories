@@ -3,20 +3,14 @@ package dropwizard.client;
 import lombok.*;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.Instant;
 
 
-@Getter
-@Setter
-@ToString
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Category {
-
-
 
     @ColumnName("id")
     private Long id;

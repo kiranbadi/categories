@@ -9,8 +9,6 @@ import java.sql.SQLException;
 
 public class CategoryMapper implements RowMapper<Category> {
 
-    public static final CategoryMapper factory = new CategoryMapper();
-
     @Override
     public Category map(ResultSet rs, StatementContext ctx) throws SQLException {
         return  Category.builder()

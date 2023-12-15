@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: badi1991_listngrow
+    environment:
+      MYSQL_ROOT_PASSWORD: kiran
+      MYSQL_DATABASE: badi1991_listngrow
+      MYSQL_USER: kiran
+      MYSQL_PASSWORD: kiran
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - local
+networks:
+  local:
+    driver: bridge
