@@ -39,11 +39,7 @@ public class CategoryMapperTest {
         when(resultSet.getString("updated_at")).thenReturn("2023-01-02");
         when(resultSet.getString("created_by")).thenReturn("John");
         when(resultSet.getString("updated_by")).thenReturn("Alice");
-
-        // Act
         Category category = categoryMapper.map(resultSet, statementContext);
-
-        // Assert
         assertNotNull(category);
         assertEquals(1L, category.getId());
         assertEquals(123L, category.getCategory_id());
@@ -54,8 +50,6 @@ public class CategoryMapperTest {
         assertEquals("2023-01-02", category.getUpdated_at());
         assertEquals("John", category.getCreated_by());
         assertEquals("Alice", category.getUpdated_by());
-
-        // Verify that ResultSet methods were called
         verify(resultSet).getLong("id");
         verify(resultSet).getLong("category_id");
         verify(resultSet).getString("category_name");
@@ -65,8 +59,6 @@ public class CategoryMapperTest {
         verify(resultSet).getString("updated_at");
         verify(resultSet).getString("created_by");
         verify(resultSet).getString("updated_by");
-
-        // Verify that other ResultSet methods were not called
         verifyNoMoreInteractions(resultSet);
     }
 }
