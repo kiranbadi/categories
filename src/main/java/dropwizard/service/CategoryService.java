@@ -2,8 +2,10 @@ package dropwizard.service;
 
 import dropwizard.client.Category;
 import dropwizard.db.CategoryRepository;
+import lombok.NoArgsConstructor;
 
 import java.util.Optional;
+
 
 
 public class CategoryService {

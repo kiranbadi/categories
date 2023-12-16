@@ -21,11 +21,12 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Category findCategoryByCategoryId(Integer id) {
-        return jdbi.withHandle(handle -> handle.createQuery("SELECT * FROM categories WHERE category_id = :id")
+        return jdbi.withHandle(handle ->
+                 handle.createQuery("SELECT * FROM categories WHERE category_id = :id")
                 .bind("id", id)
                 .mapToBean(Category.class)
                 .findFirst()
-                .orElse(null));
+                .orElseThrow(() -> new RuntimeException("No category found with id " + id)));
     }
 
     @Override
@@ -35,7 +36,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 .bind("id", id)
                 .mapToBean(Category.class)
                 .findFirst()
-                .orElse(null));
+                .orElseThrow(() -> new RuntimeException("No category found with name " + name + " or id " + id)));
     }
 
     @Override
@@ -51,8 +52,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .orElse(null));
-
+                .orElseThrow(() -> new RuntimeException("Unable to save category")));
     }
 
     @Override
@@ -67,7 +67,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         return jdbi.withHandle(handle -> handle.createQuery("SELECT * FROM categories WHERE id = :id")
                 .bind("id", id)
                 .mapToBean(Category.class)
-                .findFirst());
+                .findFirst()
+                .map(Optional::of)
+                .orElseThrow(() -> new RuntimeException("No category found with id " + id)));
     }
 
     @Override
