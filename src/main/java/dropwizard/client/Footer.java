@@ -1,11 +1,10 @@
 package dropwizard.client;
 
 import lombok.Data;
-import lombok.Getter;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 
-@Getter
+
 @Data
 public class Footer {
 

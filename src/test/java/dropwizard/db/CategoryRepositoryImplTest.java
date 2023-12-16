@@ -1,143 +1,172 @@
 package dropwizard.db;
 
 import dropwizard.client.Category;
+import dropwizard.utils.TestUtils;
 import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.result.ResultIterator;
+import org.jdbi.v3.core.result.ResultBearing;
+import org.jdbi.v3.core.result.ResultIterable;
 import org.jdbi.v3.core.statement.Query;
 import org.jdbi.v3.core.statement.Update;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
 class CategoryRepositoryImplTest {
 
-    @Mock
-    private CategoryRepository categoryRepository;
+   private CategoryRepository categoryRepository;
 
-    @Mock
-    private Jdbi jdbi;
+   private AutoCloseable closeable;
 
-    @Mock
-    private Handle handle;
-
-    @Mock
-    private Update update;
-
-    @Mock
-    private Query query;
+   @Mock
+   private Jdbi jdbi;
 
 
     @BeforeEach
-    public void setUp() {
-        categoryRepository = new CategoryRepositoryImpl(jdbi);
-        when(jdbi.open()).thenReturn(handle);
-        when(handle.createUpdate(anyString())).thenReturn(update);
-        when(update.bind(anyString(), Optional.ofNullable(any()))).thenReturn(update);
-        when(update.execute()).thenReturn(1);
-        };
+    public void openMocks() {
+       closeable = MockitoAnnotations.openMocks(this);
+       categoryRepository = new CategoryRepositoryImpl(jdbi);
+    }
 
+
+    @AfterEach
+    public void releaseMocks() throws Exception {
+        closeable.close();
+    }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void findCategoryByCategoryId() {
-        int categoryId = 1;
-        Category expectedCategory = new Category();
-        ResultIterator<?> resultIterator = mock(ResultIterator.class);
-        when(handle.createQuery(anyString())).thenReturn(query);
-        when(query.bind("id",categoryId).thenReturn(query);
-        when(query.mapToBean(Category.class)).thenReturn(expectedCategory);
-        when(query.findFirst()).thenReturn(Optional.of(expectedCategory));
-        when(query.iterator()).thenReturn(resultIterator);
-        when(resultIterator.hasNext()).thenReturn(true, false);
-        when(resultIterator.next()).thenReturn(expectedCategory);
-        ResultIterator<Category> resultIterator = Mockito.mock(ResultIterator.class);
+        Category category = category();
+        when(jdbi.withHandle(any())).thenAnswer((Answer) invocation -> {
+            HandleCallback callback = invocation.getArgument(0);
+            Handle handle = mock(Handle.class);
+            Query query = mock(Query.class);
+            ResultIterable resultIterable = mock(ResultIterable.class);
+            when(handle.createQuery(anyString())).thenReturn(query);
+            when(query.bind(anyString(), (Integer) any())).thenReturn(query);
+            when(query.mapToBean(Category.class)).thenReturn(resultIterable);
+            when(resultIterable.findFirst()).thenReturn(Optional.of(category));
+            return callback.withHandle(handle);
+        });
+        Category category1 = categoryRepository.findCategoryByCategoryId(1);
+        assertEquals(category, category1);
 
-        when(handle.createQuery(anyString())).thenReturn(query);
-        when(query.bind("id", categoryId)).thenReturn(query);
-        when(query.mapToBean(Category.class)).thenReturn(query);
-        when(query.findFirst()).thenReturn(Optional.of(expectedCategory));
-        when(query.iterator()).thenReturn(resultIterator);
-        when(resultIterator.hasNext()).thenReturn(true, false);
-        when(resultIterator.next()).thenReturn(expectedCategory);
-
-        // Act
-        Category result = yourRepository.findCategoryByCategoryId(categoryId);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(expectedCategory, result);
-
-        // Verify that the methods were called with the expected arguments and in the correct order
-        verify(handle).createQuery("SELECT * FROM categories WHERE category_id = :id");
-        verify(query).bind("id", categoryId);
-        verify(query).mapToBean(Category.class);
-        verify(query).findFirst();
-        verify(resultIterator, times(2)).hasNext();
-        verify(resultIterator).next();
     }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void findCategoryByNameOrId() {
-        String categoryName = "name";
-        int categoryId = 1;
-        Category category = new Category(1L,1L, "name", "description", "status","created_at","updated_at","created_by","updated_by");
-        when(categoryRepository.findCategoryByNameOrId(categoryName,categoryId))
-                .thenReturn(category);
-        Category result = categoryRepository.findCategoryByNameOrId(categoryName,categoryId);
-        assertEquals(category, result);
+        Category category = category();
+        when(jdbi.withHandle(any())).thenAnswer((Answer) invocation -> {
+            HandleCallback callback = invocation.getArgument(0);
+            Handle handle = mock(Handle.class);
+            Query query = mock(Query.class);
+            ResultIterable resultIterable = mock(ResultIterable.class);
+            when(handle.createQuery(anyString())).thenReturn(query);
+            when(query.bind(anyString(), anyString())).thenReturn(query);
+            when(query.bind(anyString(), (Integer) any())).thenReturn(query);
+            when(query.mapToBean(Category.class)).thenReturn(resultIterable);
+            when(resultIterable.findFirst()).thenReturn(Optional.of(category));
+            return callback.withHandle(handle);
+        });
+        Category category1 = categoryRepository.findCategoryByNameOrId("Test", 1);
+        assertEquals(category, category1);
     }
 
     @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
     void saveCategory() {
-        Category category = new Category(1L,1L, "name", "description", "status","created_at","updated_at","created_by","updated_by");
-        when(categoryRepository.saveCategory(category))
-                .thenReturn(category);
-        Category result = categoryRepository.saveCategory(category);
-        assertEquals(category, result);
+        Category category = TestUtils.category();
+        when(jdbi.withHandle(any())).thenAnswer((Answer) invocation -> {
+            HandleCallback callback = invocation.getArgument(0);
+            Handle handle = mock(Handle.class);
+            Update update = mock(Update.class);
+            ResultBearing resultBearing = mock(ResultBearing.class);
+            ResultIterable resultIterable = mock(ResultIterable.class);
+            when(handle.createUpdate(anyString())).thenReturn(update);
+            when(update.bind(anyString(), any(Long.class))).thenReturn(update);
+            when(update.bind(anyString(), anyString())).thenReturn(update);
+            when(update.bind(anyString(), anyString())).thenReturn(update);
+            when(update.bind(anyString(), anyString())).thenReturn(update);
+            when(update.executeAndReturnGeneratedKeys()).thenReturn(resultBearing);
+            when(resultBearing.mapTo(Long.class)).thenReturn(resultIterable);
+            when(resultIterable.map(any())).thenReturn(resultIterable);
+            when(resultIterable.filter(any())).thenReturn(resultIterable);
+            when(resultIterable.map(any())).thenReturn(resultIterable);
+            when(resultIterable.findFirst()).thenReturn(Optional.of(category));
+            return callback.withHandle(handle);
+        });
+        Category category1 = categoryRepository.saveCategory(category);
+        verify(jdbi, times(1)).withHandle(any());
+        Assertions.assertEquals(category, category1);
     }
 
     @Test
+    @SuppressWarnings({"rawtypes"})
     void deleteCategory() {
-        Integer categoryIdToDelete = 123;
-        when(handle.createUpdate(anyString())).thenReturn(update);
-
-        // Your repository method
-        categoryRepository.deleteCategory(categoryIdToDelete);
-
-        // Act
-        verify(handle).createUpdate("DELETE FROM categories WHERE category_id = :category_id");
-        verify(update).bind("category_id", categoryIdToDelete);
-        verify(update).execute();
+        when(jdbi.withHandle(any())).thenAnswer((Answer) invocation -> {
+            HandleCallback callback = invocation.getArgument(0);
+            Handle handle = mock(Handle.class);
+            Update update = mock(Update.class);
+            when(handle.createUpdate(anyString())).thenReturn(update);
+            when(update.bind(anyString(), (Integer) any())).thenReturn(update);
+            when(update.execute()).thenReturn(1);
+            return callback.withHandle(handle);
+        });
+        categoryRepository.deleteCategory(1);
+        verify(jdbi, times(1)).withHandle(any());
     }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void findCategoryById() {
-        int categoryId = 1;
-        Category category = new Category(1L,1L, "name", "description", "status","created_at","updated_at","created_by","updated_by");
-        when(categoryRepository.findCategoryById(categoryId))
-                .thenReturn(Optional.of(category));
-        Optional<Category> result = categoryRepository.findCategoryById(categoryId);
-        assertEquals(Optional.of(category), result);
+        Category category = category();
+        when(jdbi.withHandle(any())).thenAnswer((Answer) invocation -> {
+            HandleCallback callback = invocation.getArgument(0);
+            Handle handle = mock(Handle.class);
+            Query query = mock(Query.class);
+            ResultIterable resultIterable = mock(ResultIterable.class);
+            when(handle.createQuery(anyString())).thenReturn(query);
+            when(query.bind(anyString(), (Integer) any())).thenReturn(query);
+            when(query.mapToBean(Category.class)).thenReturn(resultIterable);
+            when(resultIterable.findFirst()).thenReturn(Optional.of(category));
+            return callback.withHandle(handle);
+        });
+       Optional<Category> category1 = categoryRepository
+                .findCategoryById(1);
+        assertEquals(category, category1.stream().reduce((a, b) -> b).orElse(null));
     }
 
     @Test
     void upsertCategory() {
-        Category category = new Category(1L,1L, "name", "description", "status","created_at","updated_at","created_by","updated_by");
-        when(categoryRepository.upsertCategory(category))
-                .thenReturn(Optional.of(category));
-        Optional<Category> result = categoryRepository.upsertCategory(category);
-        assertEquals(Optional.of(category), result);
+        // TODO: Implement
+    }
+
+    private Category category() {
+        Category category = new Category();
+        category.setCategory_id(1L);
+        category.setCategory_name("Test");
+        category.setCategory_description("Test");
+        category.setCategory_status("Test");
+        category.setCreated_by("Test");
+        category.setUpdated_by("Test");
+        category.setCreated_at("Test");
+        category.setUpdated_at("Test");
+        return category;
     }
 }
