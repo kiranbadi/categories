@@ -1,11 +1,10 @@
 package dropwizard;
 
-import dropwizard.db.CategoryRepository;
-import dropwizard.db.CategoryRepositoryImpl;
-import dropwizard.db.FooterRepository;
-import dropwizard.db.FooterRepositoryImpl;
+import dropwizard.db.*;
+import dropwizard.resources.BatchJobResource;
 import dropwizard.resources.CategoryResource;
 import dropwizard.resources.FooterResource;
+import dropwizard.service.BatchJobService;
 import dropwizard.service.CategoryService;
 import dropwizard.service.FooterService;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
@@ -47,5 +46,9 @@ public class Categories extends Application<CategoriesConfiguration> {
         final FooterService footerService = new FooterService(footerRepository);
         final FooterResource footerResource = new FooterResource(footerService);
         environment.jersey().register(footerResource);
+        final BatchJobInstanceRepository batchJobInstanceRepository = new BatchJobInstanceRepositoryImpl(jdbi);
+        final BatchJobService batchJobInstanceService = new BatchJobService(batchJobInstanceRepository);
+        final BatchJobResource batchJobInstanceResource = new BatchJobResource(batchJobInstanceService);
+        environment.jersey().register(batchJobInstanceResource);
     }
 }
