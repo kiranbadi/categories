@@ -29,18 +29,15 @@ public class BatchJobInstanceRepositoryImpl implements BatchJobInstanceRepositor
         if(jobKey != null && !jobKey.isEmpty()) {
             find_all_batch_sql.append(" AND JOB_KEY= :jobKey");
         }
-        System.out.println("find_all_batch_sql: " + find_all_batch_sql.toString());
         return jdbi.withHandle(handle -> handle.createQuery(find_all_batch_sql.toString())
                 .bind("jobKey", jobKey)
                 .bind("jobName", jobName)
-                .registerRowMapper(ConstructorMapper.factory(BatchJobInstance.class))
-                .mapTo(BatchJobInstance.class)
-//                .registerRowMapper(BatchJobInstance.class, (rs, ctx) -> new BatchJobInstance(
-//                        rs.getBigDecimal("jobInstanceId").toBigInteger(),
-//                        rs.getBigDecimal("version").toBigInteger(),
-//                        rs.getString("jobName"),
-//                        rs.getString("jobKey")
-//                )).mapTo(BatchJobInstance.class)
+                .registerRowMapper(BatchJobInstance.class, (rs, ctx) -> new BatchJobInstance(
+                        rs.getBigDecimal("jobInstanceId").toBigInteger(),
+                        rs.getBigDecimal("version").toBigInteger(),
+                        rs.getString("jobName"),
+                        rs.getString("jobKey")
+                )).mapTo(BatchJobInstance.class)
                 .list());
 
     }
