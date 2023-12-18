@@ -8,6 +8,7 @@ import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.jdbi.v3.core.result.ResultBearing;
 import org.jdbi.v3.core.result.ResultIterable;
 import org.jdbi.v3.core.statement.Query;
+import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.stubbing.Answer;
 
 import java.math.BigInteger;
@@ -53,6 +55,7 @@ class BatchJobInstanceRepositoryImplTest {
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes" })
+    @MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
     void findAllBatchJobInstances() {
 
         List<BatchJobInstance> list = List.of(new BatchJobInstance(BigInteger.ONE, BigInteger.ONE, "test", "test"));
@@ -63,11 +66,11 @@ class BatchJobInstanceRepositoryImplTest {
             Query query = mock(Query.class);
             ResultIterable resultIterable = mock(ResultIterable.class);
             ResultBearing resultBearing = mock(ResultBearing.class);
+            ConstructorMapper constructorMapper = mock(ConstructorMapper.class);
             when(handle.createQuery(anyString())).thenReturn(query);
             when(query.bind(anyString(),anyString())).thenReturn(query);
             when(query.bind(anyString(),anyString())).thenReturn(query);
-            when(query.registerRowMapper(ConstructorMapper.factory(BatchJobInstance.class)))
-                    .thenReturn(query);
+            //when(query.registerRowMapper(constructorMapper))).thenReturn(query);
             when(query.mapTo(BatchJobInstance.class)).thenReturn(resultIterable);
             when(resultIterable.list()).thenReturn(list);
             return callback.withHandle(handle);

@@ -1,5 +1,6 @@
 package dropwizard.client;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor //(onConstructor = @__(@JdbiConstructor))
 public class BatchJobInstance {
 
     private BigInteger jobInstanceId;
@@ -21,12 +23,4 @@ public class BatchJobInstance {
 
     private String jobKey;
 
-
-    @JdbiConstructor
-    public BatchJobInstance(BigInteger jobInstanceId, BigInteger version, String jobName, String jobKey) {
-        this.jobInstanceId = jobInstanceId;
-        this.version = version;
-        this.jobName = jobName;
-        this.jobKey = jobKey;
-    }
 }
