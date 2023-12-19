@@ -32,12 +32,8 @@ public class BatchJobInstanceRepositoryImpl implements BatchJobInstanceRepositor
         return jdbi.withHandle(handle -> handle.createQuery(find_all_batch_sql.toString())
                 .bind("jobKey", jobKey)
                 .bind("jobName", jobName)
-                .registerRowMapper(BatchJobInstance.class, (rs, ctx) -> new BatchJobInstance(
-                        rs.getBigDecimal("jobInstanceId").toBigInteger(),
-                        rs.getBigDecimal("version").toBigInteger(),
-                        rs.getString("jobName"),
-                        rs.getString("jobKey")
-                )).mapTo(BatchJobInstance.class)
+                .registerRowMapper(ConstructorMapper.factory(BatchJobInstance.class))
+                .mapTo(BatchJobInstance.class)
                 .list());
 
     }

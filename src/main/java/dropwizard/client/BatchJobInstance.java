@@ -12,7 +12,7 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor //(onConstructor = @__(@JdbiConstructor))
+@AllArgsConstructor (onConstructor = @__(@JdbiConstructor))
 public class BatchJobInstance {
 
     private BigInteger jobInstanceId;
