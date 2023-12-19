@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public class CategoriesConfiguration extends Configuration {
-    // TODO: implement service configuration
 
     @Valid
     @NotNull
