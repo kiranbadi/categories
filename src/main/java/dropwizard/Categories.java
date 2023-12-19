@@ -1,5 +1,6 @@
 package dropwizard;
 
+
 import dropwizard.db.*;
 import dropwizard.resources.BatchJobResource;
 import dropwizard.resources.CategoryResource;

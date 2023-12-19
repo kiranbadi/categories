@@ -1,0 +1,21 @@
+logging:
+  level: INFO
+  loggers:
+    vasanti: DEBUG
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  user: ${db_user}
+  password: ${db_password}
+  url: jdbc:mysql://${db_host}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+  maxWaitForConnection: 1s
+  validationQuery: SELECT 1
+  minSize: 5
+  maxSize: 25
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+  maxConnectionAge: 1h
+  validationInterval: 15s
